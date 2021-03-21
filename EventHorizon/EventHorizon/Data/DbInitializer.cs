@@ -36,31 +36,47 @@ namespace EventHorizon.Data
 
             if(!context.Organizer.Any())
             {
-                context.Organizer.Add(new Organizer()
-                {
-                    Name = "Lukas Lustriga Lökhus",
-                    Email = "liustrigtlustig@email.com",
-                    Phone = "1111112222222"
-                });
-                context.Organizer.Add(new Organizer()
-                {
-                    Name = "Flinigt plejs",
-                    Email = "flin@email.com",
-                    Phone = "333333333333"
-                });
-                context.Organizer.Add(new Organizer()
-                {
-                    Name = "Gabriellas Gastkåk",
-                    Email = "gastkak@email.com",
-                    Phone = "444444444444"
-                });
-                context.Organizer.Add(new Organizer()
-                {
-                    Name = "Fidolinas fiolkammare",
-                    Email = "fidolinas@email.com",
-                    Phone = "555555555555"
-                });
+                context.Organizer.AddRange(
+                    new Organizer()
+                    {
+                        Name = "Lukas Lustriga Lökhus",
+                        Email = "liustrigtlustig@email.com",
+                        Phone = "1111112222222"
+                    }, new Organizer()
+                    {
+                        Name = "Flinigt plejs",
+                        Email = "flin@email.com",
+                        Phone = "333333333333"
+                    }, new Organizer()
+                    {
+                        Name = "Gabriellas Gastkåk",
+                        Email = "gastkak@email.com",
+                        Phone = "444444444444"
+                    }, new Organizer()
+                    {
+                        Name = "Fidolinas fiolkammare",
+                        Email = "fidolinas@email.com",
+                        Phone = "555555555555"
+                    }
+                );
                 context.SaveChanges();
+            }
+
+            if (!context.Event.Any())
+            {
+                context.Event.AddRange(new Event()
+                    {
+                        Address = "Fjodors Grusväg 23",
+                        Title = "Börjes Fyllekalas 50år",
+                        SpotsAvailable = 50,
+                        Description = "Vi firar Börje och det blir ett jädrans hålligång med öl och saft.",
+                        Date = new DateTime(2021, 06, 06),
+                        Organizer = context.Organizer.FirstOrDefault(x => x.Name.Equals("Lukas Lustriga Lökhus")),
+                        Place = "Hökö",
+                    }
+                );
+                context.SaveChanges();
+
             }
         }
     }
