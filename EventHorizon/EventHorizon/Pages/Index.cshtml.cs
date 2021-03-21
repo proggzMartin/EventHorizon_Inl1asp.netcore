@@ -21,5 +21,10 @@ namespace EventHorizon.Pages
         {
 
         }
+
+        public void hej()
+        {
+
+        }
     }
 }
