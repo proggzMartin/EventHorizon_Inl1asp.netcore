@@ -16,6 +16,8 @@ namespace EventHorizon.Data.Entities
         public DateTime Date { get; set; }
         public int SpotsAvailable { get; set; }
 
+        public byte[] EventImage { get; set; }
+
         public ICollection<Attendee> Attendees { get; set; }
 
         public int OrganizerId { get; set; }
