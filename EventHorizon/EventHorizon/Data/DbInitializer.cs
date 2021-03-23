@@ -1,5 +1,8 @@
 ﻿using EventHorizon.Data.Entities;
+using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace EventHorizon.Data
@@ -62,8 +65,24 @@ namespace EventHorizon.Data
                 context.SaveChanges();
             }
 
+
             if (!context.Event.Any())
             {
+                //load image files
+                var x = Directory.GetCurrentDirectory();
+                string uploadsFolder = Path.Combine(x, "EventStartImages");
+                List<byte[]> files = new List<byte[]>();
+
+                foreach (var filepath in Directory.GetFiles(uploadsFolder))
+                {
+                    //Only png-files allowed.
+                    if(Path.GetExtension(filepath).Equals(".png"))
+                    {
+                        files.Add(File.ReadAllBytes(filepath));
+                    }
+                }
+                
+
                 context.Event.AddRange(new Event()
                     {
                         Address = "Fjodors Grusväg 23",
@@ -73,6 +92,7 @@ namespace EventHorizon.Data
                         Date = new DateTime(2021, 06, 06),
                         Organizer = context.Organizer.FirstOrDefault(x => x.Name.Equals("Lukas Lustriga Lökhus")),
                         Place = "Hökö",
+                        EventImage = (files != null && files.Count > 0 ? files[0] : null)
                     }, new Event()
                     {
                         Address = "StålFiolas väg 1",
@@ -83,8 +103,9 @@ namespace EventHorizon.Data
                         Date = new DateTime(2022, 01, 13),
                         Organizer = context.Organizer.FirstOrDefault(x => x.Name.Equals("Flinigt plejs")),
                         Place = "AmsterGrannt",
+                        EventImage = (files != null && files.Count > 1 ? files[1] : null)
                     }
-                );
+                );;
                 context.SaveChanges();
 
             }
