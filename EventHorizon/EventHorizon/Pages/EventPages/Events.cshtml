@@ -1,0 +1,38 @@
+﻿@page
+@model EventHorizon.Pages.EventPages.EventsModel
+@{
+}
+
+<div >
+    @if (Model.Events == null || Model.Events.Count < 1)
+    {
+    <div class="row justify-content-center">
+        <h3>There are currently no events scheduled.</h3>
+
+    </div>
+    }
+    else
+    {
+        <div id="accordion" class="row justify-content-center">
+            @for (int i = 0; i < Model.Events.Count; i++)
+            {
+                <div class="card" style="width: 40rem;">
+                    <div class="card-header" id="heading@(i)">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse@(i)" aria-expanded="true" aria-controls="collapse@(i)">
+                                Event: @Html.DisplayFor(model => model.Events[i].Title)
+                            </button>
+                            <a class="btn btn-primary text-white float-right">Join event</a>
+                        </h5>
+                    </div>
+
+                    <div id="collapse@(i)" class="collapse @(i==0?"show":"")" aria-labelledby="heading@(i)" data-parent="#accordion">
+                        <div class="card-body">
+                            @Html.DisplayFor(model => model.Events[i].Description)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
