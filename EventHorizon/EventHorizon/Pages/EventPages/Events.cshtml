@@ -32,7 +32,11 @@
                         }
                         @if (!string.IsNullOrEmpty(imgSrc))
                         {
-                            <img src="@imgSrc" class="card-img-bottom rounded mb-2" alt="Card image cap">
+                            @*asp-append-version; suffix:ar ett random-parameter-tal  till souce-url:en för bilden;
+                              Problemet det löser är att webbrowsers gärna caches per URL, så uppdaterar man bilden
+                              på servern, kommer inte en ny laddas av browsern för den har samma source, således "finns redan".
+                              Genom att random-talet append:as, kommer broswern se detta som en ny image och ladda ner den.*@
+                            <img asp-append-version="true" src="@imgSrc" class="card-img-bottom rounded mb-2" alt="Card image cap">
                         }
                         @Html.DisplayFor(model => model.Events[i].Description)
                     </div>
