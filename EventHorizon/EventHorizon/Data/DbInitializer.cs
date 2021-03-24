@@ -98,8 +98,8 @@ namespace EventHorizon.Data
                         Address = "StålFiolas väg 1",
                         Title = "Agata Adaktussons nyhetsevent",
                         SpotsAvailable = 2,
-                        Description = "En resa i oerhört primitiva och ofaschinerande nyheter om konflikter och socialpolitiska konflikter som inträffat det senaste året." +
-                        "Så lite som möjligt om vetenskapliga fakta och beprövade teorier som möjligt.",
+                        Description = "En resa i oerhört primitiva och ofaschinerande nyheter om reptilprimitiva militära och socialpolitiska konflikter som inträffat det senaste året." +
+                        " Så lite som möjligt om vetenskapliga fakta och beprövade teorier vilka skulle kunna driva mänskligheten framåt på riktigt, bort!.",
                         Date = new DateTime(2022, 01, 13),
                         Organizer = context.Organizer.FirstOrDefault(x => x.Name.Equals("Flinigt plejs")),
                         Place = "AmsterGrannt",
