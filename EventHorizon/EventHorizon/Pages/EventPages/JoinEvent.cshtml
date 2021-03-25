@@ -1,0 +1,61 @@
+﻿@page "{Id}"
+@model EventHorizon.Pages.EventPages.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+@if (Model.Event == null)
+{
+    <div class="row justify-content-center">
+        <h3>There was a problem finding the event, try again later.</h3>
+    </div>
+}
+else
+{
+    @* Kuriosa; cache här ställer till det; laddar jag ett event, går tillbaka och försöker ladda ett annat, så ligger det gamla kvar!
+        Detta trots jag har vary by query-Id. Men då hade jag inte "?Id=10", utan "/Id=10", så jag fick ingen korrekt caching. Får se 
+        om jag kommer ihåg att fixa.
+        <cache expires-after="TimeSpan.FromHours(24)" vary-by-query="Id">  *@
+    <div id="accordion" class="row justify-content-center">
+        <div class="card" style="width: 40rem;">
+            <div class="card-header" id="heading1">
+                @Html.DisplayFor(model => model.Event.Title)
+                @* asp-page pekar på sidan, asp-route-id skickar med id-parameter. Kollar man på Details-sidan,
+                    ser man i codebehind OnGetAsync att ID tas emot,
+                    och skickas mot databasen och så vidare*@
+            </div>
+            <div id="collapse1" class="collapse show" aria-labelledby="heading1" data-parent="#accordion">
+                <div class="card-body">
+                    @{
+                        var base64 = Convert.ToBase64String(Model.Event.EventImage);
+                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                    }
+                    @if (!string.IsNullOrEmpty(imgSrc))
+                    {
+                        @*asp-append-version; suffix:ar ett random-parameter-tal  till souce-url:en för bilden;
+                            Problemet det löser är att webbrowsers gärna caches per URL, så uppdaterar man bilden
+                            på servern, kommer inte en ny laddas av browsern för den har samma source, således "finns redan".
+                            Genom att random-talet append:as, kommer broswern se detta som en ny image och ladda ner den.*@
+                        <img asp-append-version="true" src="@imgSrc" class="card-img rounded mb-2" alt="Card image cap">
+                    }
+                    @Model.Event.Description
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row justify-content-center mt-4">
+    <form action="/action_page.php">
+        <label for="cars">Who are you?</label>
+        <select name="cars" class="d-inline-block">
+            @foreach (var a in Model.Attendees)
+            {
+                <option value="@{a.Id.ToString();} ">@a.Name</option>
+            }
+        </select>
+        <input type="submit" value="Join Event" class="btn btn-lg btn-primary">
+    </form>
+</div>
