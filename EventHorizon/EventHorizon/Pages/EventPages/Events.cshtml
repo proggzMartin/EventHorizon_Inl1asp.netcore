@@ -6,28 +6,32 @@
     {
         <div class="row justify-content-center">
             <h3>There are currently no events scheduled.</h3>
-
         </div>
     }
     else
     {
         @*cache tag-helper handlar om att framförallt widgets (tror jag) som inte behöver uppdateras ständigt inte
-          behöver göra nya database-queries i onödan, utan man kan med denna tag se till att de utförs inte alltför
-          ofta. Sannolikt behövs mer, behöver läsa på lite till om denna feature.*@
-        <cache expires-after="TimeSpan.FromHours(24)">
+            behöver göra nya database-queries i onödan, utan man kan med denna tag se till att de utförs inte alltför
+            ofta. Sannolikt behövs mer, behöver läsa på lite till om denna feature.
 
+            vary-by-time innebär att vi har en query-param i URL, varje gång den ändras så expirar cachen.
+            Ex. om öppnar sidan o skriver ?param1=6 så ändras datumet i toppen, ändrar man efter en stund
+            till ?param1=7 ser man att klockan uppdateras igen.
+        *@
+        <cache expires-after="TimeSpan.FromHours(24)" vary-by-query="param1">
+            @DateTime.Now
             <div id="accordion" class="row justify-content-center">
                 @for (int i = 0; i < Model.Events.Count; i++)
                 {
                     <div class="card" style="width: 40rem;">
                         <div class="card-header" id="heading@(i)">
                             <button class="btn btn-link" data-toggle="collapse" data-target="#collapse@(i)" aria-expanded="true" aria-controls="collapse@(i)">
-                                Event: @Html.DisplayFor(model => model.Events[i].Title)
+                                @Model.Events[i].Title
                             </button>
                             @* asp-page pekar på sidan, asp-route-id skickar med id-parameter. Kollar man på Details-sidan,
                                 ser man i codebehind OnGetAsync att ID tas emot,
                                 och skickas mot databasen och så vidare*@
-                            <a class="btn btn-primary text-white float-right" asp-page="Details" asp-route-id="@Model.Events[i].Id">Join event</a>
+                            <a class="btn btn-primary text-white float-right" asp-page="JoinEvent" asp-route-id="@Model.Events[i].Id">Join event</a>
                         </div>
                         <div id="collapse@(i)" class="collapse @(i==0?"show":"")" aria-labelledby="heading@(i)" data-parent="#accordion">
                             <div class="card-body">
@@ -41,15 +45,14 @@
                                         Problemet det löser är att webbrowsers gärna caches per URL, så uppdaterar man bilden
                                         på servern, kommer inte en ny laddas av browsern för den har samma source, således "finns redan".
                                         Genom att random-talet append:as, kommer broswern se detta som en ny image och ladda ner den.*@
-                                    <img asp-append-version="true" src="@imgSrc" class="card-img-bottom rounded mb-2" alt="Card image cap">
+                                    <img asp-append-version="true" src="@imgSrc" class="card-img rounded mb-2" alt="Card image cap">
                                 }
-                                @Html.DisplayFor(model => model.Events[i].Description)
+                                @Model.Events[i].Description
                             </div>
                         </div>
                     </div>
                 }
             </div>
         </cache>
-
     }
 </div>
