@@ -13,7 +13,9 @@ namespace EventHorizon.Pages.AttendeePages
         [BindProperty]
         public Attendee Attendee { get; set; }
 
-        public string Message { get; set; }
+
+        public string ErrorMessage { get; } = "Form contained errors, please correct and try again";
+        public bool FormError { get; set; }
 
         public RegisterModel(DataContext context)
         {
@@ -24,21 +26,32 @@ namespace EventHorizon.Pages.AttendeePages
         {
             return Page();
         }
-        
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async void OnPostAsync()
+
+        //// To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+        public IActionResult OnPostAsync()
         {
             if (ModelState.IsValid)
             {
-                Message = "Register completed.";
+                _context.Attendee.Add(Attendee);
+                _context.SaveChanges();
 
-                //_context.Attendee.Add(Attendee);
-                //await _context.SaveChangesAsync();
-
-                //return Page();
-                //return RedirectToPage("./Index");
+                return new RedirectToPageResult("/Confirmation", "Registration") ;
             }
+            else
+            {
+                FormError = true;
+                return Page();
+            }
+        }
+
+        //Convention: OnPostFeedback - Feedback is the same as 'asp-page-handler="Feedback"' in the page.
+        public IActionResult OnPostFeedback(string message)
+        {
+            _context.UserFeedback.Add(new UserFeedback() { Feedback = message });
+            _context.SaveChanges();
+
+            return new RedirectToPageResult("/Confirmation", "Feedback");
         }
     }
 }

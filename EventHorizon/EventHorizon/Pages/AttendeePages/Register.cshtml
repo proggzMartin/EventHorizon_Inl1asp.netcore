@@ -10,9 +10,9 @@
 <h4>Attendee</h4>
 <hr />
 
-@if (!string.IsNullOrEmpty(Model.Message))
+@if (!string.IsNullOrEmpty(Model.ErrorMessage) && Model.FormError)
 {
-    <div class="alert alert-success">@Model.Message</div>
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
 
 }
 <div class="row">
@@ -24,20 +24,35 @@
                 *@
                 <label asp-for="Attendee.Name"></label>
                 <input asp-for="Attendee.Name" class="form-control" />
-                <span asp-validation-for="Attendee.Name"></span>
+                <span asp-validation-for="Attendee.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Attendee.Email">Epost</label>
                 <input asp-for="Attendee.Email" class="form-control" />
-                <span asp-validation-for="Attendee.Email"></span>
+                <span asp-validation-for="Attendee.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Attendee.Phone">Telefon</label>
                 <input asp-for="Attendee.Phone" class="form-control" />
-                <span asp-validation-for="Attendee.Phone"></span>
+                <span asp-validation-for="Attendee.Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Register"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @* Convention_ Feedback siktar på OnPostFeedback. *@
+        <form asp-page-handler="Feedback" method="post">
+            <div class="form-group">
+                <label>Vad tycker du om vadsom? Vi vill veta!</label>
+                <textarea name="message" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-secondary" value="Register" />
             </div>
         </form>
     </div>

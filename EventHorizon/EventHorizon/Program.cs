@@ -32,6 +32,7 @@ namespace EventHorizon
                 try
                 {
                     var context = services.GetRequiredService<DataContext>();
+                    
                     DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
