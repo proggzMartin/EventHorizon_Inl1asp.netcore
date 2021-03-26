@@ -109,6 +109,27 @@ namespace EventHorizon.Data
                 context.SaveChanges();
 
             }
+
+            if (!context.UserFeedback.Any())
+            {
+                context.UserFeedback.AddRange(new UserFeedback()
+                {
+                    Feedback = "Kanonsajt, hitta allt jag klan ölönska mig!"
+                }, new UserFeedback()
+                {
+                    Feedback = "Tycker era fonter är lite tråkiga."
+                },
+                new UserFeedback()
+                {
+                    Feedback = "Bootstrap är king."
+                },
+                new UserFeedback()
+                {
+                    Feedback = "Jag gillar att det framgick att det ingick kaka till kaffet i Lovisas 70-årskalas."
+                }
+                ); ;
+                context.SaveChanges();
+            }
         }
     }
 }
