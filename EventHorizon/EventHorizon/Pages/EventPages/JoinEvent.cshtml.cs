@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -11,18 +8,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EventHorizon.Pages.EventPages
 {
-    public class DetailsModel : PageModel
+    public class JoinEvent : PageModel
     {
-        private readonly DataContext _context;
 
-        public Event Event { get; set; }
         public SelectList AttendeeSelect { get; set; }
-        public string Message { get; set; }
+
+
+        public Event Event { get; set; } = new Event();
 
         [BindProperty]
-        public Attendee ChosenAttendee { get; set; }
+        public Attendee ChosenAttendee { get; set; } = new Attendee();
 
-        public DetailsModel(DataContext context)
+        public string Message { get; set; }
+
+        public bool Joined { get; set; }
+
+
+        private readonly DataContext _context;
+
+        public JoinEvent(DataContext context)
         {
             _context = context;
         }
@@ -52,10 +56,9 @@ namespace EventHorizon.Pages.EventPages
             return Page();
         }
 
-        public IActionResult OnPost()
+        public void OnPost()
         {
-
-            return Page();
+            Joined = true;
         }
 
     }

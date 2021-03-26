@@ -1,5 +1,5 @@
 ﻿@page
-@model EventHorizon.Pages.EventPages.DetailsModel
+@model EventHorizon.Pages.EventPages.JoinEvent
 
 @{
     ViewData["Title"] = "Details";
@@ -14,10 +14,10 @@
 }
 else
 {
-    @if(!string.IsNullOrEmpty(Model.Message))
+    @if (!string.IsNullOrEmpty(Model.Message))
     {
-<div class="alert alert-success">@Model.Message</div>
-        
+        <div class="alert alert-success">@Model.Message</div>
+
     }
     @* Kuriosa; cache här ställer till det; laddar jag ett event, går tillbaka och försöker ladda ett annat, så ligger det gamla kvar!
         Detta trots jag har vary by query-Id. Men då hade jag inte "?Id=10", utan "/Id=10", så jag fick ingen korrekt caching. Får se
@@ -53,18 +53,23 @@ else
 }
 
 
-@if (Model.AttendeeSelect != null && Model.AttendeeSelect.Count() > 0)
+@if (!Model.Joined && Model.AttendeeSelect != null && Model.AttendeeSelect.Count() > 0)
 {
     <div class="row justify-content-center mt-4">
         <form asp-page="JoinEvent" method="post">
             <label for="cars">Who are you?</label>
-            <select asp-for="ChosenAttendee.Id" asp-items="@Model.AttendeeSelect" class="d-inline-block">
-                @*@foreach (var a in Model.Attendees)
-                {
-                    <option value="@{a.Id.ToString();}">@a.Name</option>
-                }*@
-            </select>
+            <select asp-for="ChosenAttendee.Id" asp-items="@Model.AttendeeSelect" class="d-inline-block"></select>
             <input type="submit" value="Join Event" class="btn btn-lg btn-primary">
         </form>
+    </div>
+}
+else if (Model.Joined)
+{
+    <div class="row justify-content-center mt-4">
+        <h1>Successfully joined "@Model.Event.Title"! See you there!</h1>
+    </div>
+    <div class="row justify-content-center">
+        <a class="btn btn-primary text-white" asp-page="Events">View more events</a>
+        <a class="btn btn-primary text-white" asp-page="/AttendeePages/MyEvents">View your events</a>
     </div>
 }
