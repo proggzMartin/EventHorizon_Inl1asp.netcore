@@ -9,36 +9,41 @@
 
 <h4>Attendee</h4>
 <hr />
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-success">@Model.Message</div>
+
+}
 <div class="row">
     <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-page="Register" method="post">
             <div class="form-group">
-                <label asp-for="Attendee.Name" class="control-label"></label>
+                @* asp-for, taghelper för modelbinding. asp-for avgör också TYPEN av input baserat på
+                    typen Attendee.Name har.
+                *@
+                <label asp-for="Attendee.Name"></label>
                 <input asp-for="Attendee.Name" class="form-control" />
-                <span asp-validation-for="Attendee.Name" class="text-danger"></span>
+                <span asp-validation-for="Attendee.Name"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Attendee.Email" class="control-label"></label>
+                <label asp-for="Attendee.Email">Epost</label>
                 <input asp-for="Attendee.Email" class="form-control" />
-                <span asp-validation-for="Attendee.Email" class="text-danger"></span>
+                <span asp-validation-for="Attendee.Email"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Attendee.Phone" class="control-label"></label>
+                <label asp-for="Attendee.Phone">Telefon</label>
                 <input asp-for="Attendee.Phone" class="form-control" />
-                <span asp-validation-for="Attendee.Phone" class="text-danger"></span>
+                <span asp-validation-for="Attendee.Phone"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" class="btn btn-primary" value="Register"/>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@*@section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }*@

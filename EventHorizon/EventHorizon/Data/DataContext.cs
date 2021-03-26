@@ -18,6 +18,6 @@ namespace EventHorizon.Data
         public DbSet<Attendee> Attendee { get; set; }
         public DbSet<Organizer> Organizer { get; set; }
 
-
+        public DbSet<UserFeedback> UserFeedback { get; set; }
     }
 }

@@ -23,7 +23,9 @@ namespace EventHorizon.Pages.AttendeePages
 
         public async Task OnGetAsync()
         {
-            Attendee = await _context.Attendee.ToListAsync();
+            var x = _context.Attendee;
+            var y = x.ToList();
+            Attendee = await _context.Attendee?.ToListAsync();
         }
     }
 }
