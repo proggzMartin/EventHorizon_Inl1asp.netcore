@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using EventHorizon.Data;
 using EventHorizon.Data.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EventHorizon.Pages.EventPages
 {
@@ -15,7 +16,7 @@ namespace EventHorizon.Pages.EventPages
         private readonly DataContext _context;
 
         public Event Event { get; set; }
-        public List<Attendee> Attendees { get; set; }
+        public SelectList AttendeeSelect { get; set; }
         public string Message { get; set; }
 
         [BindProperty]
@@ -33,10 +34,15 @@ namespace EventHorizon.Pages.EventPages
                 return NotFound();
             }
 
+            //Det är ett medvetet dumt val att query:a på eventTitle eftersom den inte är
+            //nödvändigtvis unik, men ville testa något nytt
+            //(får annan route till sidan)
             Event = await _context.Event
-                .Include(x => x.Organizer).FirstOrDefaultAsync(m => m.Id == id);
+                .Include(x => x.Organizer).FirstOrDefaultAsync(m => m.Id.Equals(id));
 
-            Attendees = await _context.Attendee.AsNoTracking().ToListAsync();
+            var q = await _context.Attendee.AsNoTracking().ToListAsync();
+
+            AttendeeSelect = new SelectList(q, "Id", "Name");
 
             if (Event == null)
             {
@@ -46,9 +52,10 @@ namespace EventHorizon.Pages.EventPages
             return Page();
         }
 
-        public void OnPost()
+        public IActionResult OnPost()
         {
-            Message = "POST";
+
+            return Page();
         }
 
     }

@@ -1,4 +1,4 @@
-﻿@page "{Id}"
+﻿@page
 @model EventHorizon.Pages.EventPages.DetailsModel
 
 @{
@@ -53,16 +53,16 @@ else
 }
 
 
-@if (Model.Attendees != null && Model.Attendees.Count > 0)
+@if (Model.AttendeeSelect != null && Model.AttendeeSelect.Count() > 0)
 {
     <div class="row justify-content-center mt-4">
-        <form action="/action_page.php">
+        <form asp-page="JoinEvent" method="post">
             <label for="cars">Who are you?</label>
-            <select name="cars" class="d-inline-block">
-                @foreach (var a in Model.Attendees)
+            <select asp-for="ChosenAttendee.Id" asp-items="@Model.AttendeeSelect" class="d-inline-block">
+                @*@foreach (var a in Model.Attendees)
                 {
-                    <option value="@{a.Id.ToString();} ">@a.Name</option>
-                }
+                    <option value="@{a.Id.ToString();}">@a.Name</option>
+                }*@
             </select>
             <input type="submit" value="Join Event" class="btn btn-lg btn-primary">
         </form>

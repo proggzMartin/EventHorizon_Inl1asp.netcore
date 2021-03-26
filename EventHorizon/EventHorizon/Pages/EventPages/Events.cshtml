@@ -18,41 +18,51 @@
             Ex. om öppnar sidan o skriver ?param1=6 så ändras datumet i toppen, ändrar man efter en stund
             till ?param1=7 ser man att klockan uppdateras igen.
         *@
-        <cache expires-after="TimeSpan.FromHours(24)" vary-by-query="param1">
-            @DateTime.Now
-            <div id="accordion" class="row justify-content-center">
-                @for (int i = 0; i < Model.Events.Count; i++)
-                {
-                    <div class="card" style="width: 40rem;">
-                        <div class="card-header" id="heading@(i)">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse@(i)" aria-expanded="true" aria-controls="collapse@(i)">
-                                @Model.Events[i].Title
-                            </button>
-                            @* asp-page pekar på sidan, asp-route-id skickar med id-parameter. Kollar man på Details-sidan,
-                                ser man i codebehind OnGetAsync att ID tas emot,
-                                och skickas mot databasen och så vidare*@
-                            <a class="btn btn-primary text-white float-right" asp-page="JoinEvent" asp-route-id="@Model.Events[i].Id">Join event</a>
-                        </div>
-                        <div id="collapse@(i)" class="collapse @(i==0?"show":"")" aria-labelledby="heading@(i)" data-parent="#accordion">
-                            <div class="card-body">
-                                @{
-                                    var base64 = Convert.ToBase64String(Model.Events[i]?.EventImage);
-                                    var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-                                }
-                                @if (!string.IsNullOrEmpty(imgSrc))
-                                {
-                                    @*asp-append-version; suffix:ar ett random-parameter-tal  till souce-url:en för bilden;
-                                        Problemet det löser är att webbrowsers gärna caches per URL, så uppdaterar man bilden
-                                        på servern, kommer inte en ny laddas av browsern för den har samma source, således "finns redan".
-                                        Genom att random-talet append:as, kommer broswern se detta som en ny image och ladda ner den.*@
-                                    <img asp-append-version="true" src="@imgSrc" class="card-img rounded mb-2" alt="Card image cap">
-                                }
-                                @Model.Events[i].Description
-                            </div>
-                        </div>
+<cache expires-after="TimeSpan.FromHours(24)" vary-by-query="param1">
+    @DateTime.Now @*<-- Detta användes för att testa <cache>. skriv in "?param1=hej" i path för att sätta ny tid,
+                    den beror av vary-by-query="param1"
+                  *@
+    <div id="accordion" class="row justify-content-center">
+        @for (int i = 0; i < Model.Events.Count; i++)
+        {
+            <div class="card" style="width: 40rem;">
+                <div class="card-header" id="heading@(i)">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse@(i)" aria-expanded="true" aria-controls="collapse@(i)">
+                        @Model.Events[i].Title
+                    </button>
+                    @* asp-page pekar på sidan, asp-route-id skickar med id-parameter. Kollar man på Details-sidan,
+                        ser man i codebehind OnGetAsync att ID tas emot,
+                        och skickas mot databasen och så vidare
+                    *@
+                    @* Nu lite senare bytte
+                        asp-route-id
+                        till
+                        asp-route-eventTitle
+                        --> Detta är route-param för JoinEvent.cshtml nu.
+                        Det är inte det smartaste, eftersom Title sällan är unik, men mja jag ville testa något annat.
+                    *@
+                    <a class="btn btn-primary text-white float-right" asp-page="JoinEvent" asp-route-id="@Model.Events[i].Id">Join event</a>
+                </div>
+                <div id="collapse@(i)" class="collapse @(i==0?"show":"")" aria-labelledby="heading@(i)" data-parent="#accordion">
+                    <div class="card-body">
+                        @{
+                            var base64 = Convert.ToBase64String(Model.Events[i]?.EventImage);
+                            var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                        }
+                        @if (!string.IsNullOrEmpty(imgSrc))
+                        {
+                            @*asp-append-version; suffix:ar ett random-parameter-tal  till souce-url:en för bilden;
+                                Problemet det löser är att webbrowsers gärna caches per URL, så uppdaterar man bilden
+                                på servern, kommer inte en ny laddas av browsern för den har samma source, således "finns redan".
+                                Genom att random-talet append:as, kommer broswern se detta som en ny image och ladda ner den.*@
+                            <img asp-append-version="true" src="@imgSrc" class="card-img rounded mb-2" alt="Card image cap">
+                        }
+                        @Model.Events[i].Description
                     </div>
-                }
+                </div>
             </div>
-        </cache>
+        }
+    </div>
+</cache>
     }
 </div>
