@@ -15,8 +15,11 @@ namespace EventHorizon.Pages.EventPages
         private readonly DataContext _context;
 
         public Event Event { get; set; }
-
         public List<Attendee> Attendees { get; set; }
+        public string Message { get; set; }
+
+        [BindProperty]
+        public Attendee ChosenAttendee { get; set; }
 
         public DetailsModel(DataContext context)
         {
@@ -43,11 +46,9 @@ namespace EventHorizon.Pages.EventPages
             return Page();
         }
 
-        public async Task<IActionResult> OnPost(int userId)
+        public void OnPost()
         {
-
-
-            return Page();
+            Message = "POST";
         }
 
     }

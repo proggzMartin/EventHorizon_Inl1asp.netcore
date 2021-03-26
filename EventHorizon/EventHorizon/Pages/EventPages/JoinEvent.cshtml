@@ -14,8 +14,13 @@
 }
 else
 {
+    @if(!string.IsNullOrEmpty(Model.Message))
+    {
+<div class="alert alert-success">@Model.Message</div>
+        
+    }
     @* Kuriosa; cache här ställer till det; laddar jag ett event, går tillbaka och försöker ladda ett annat, så ligger det gamla kvar!
-        Detta trots jag har vary by query-Id. Men då hade jag inte "?Id=10", utan "/Id=10", så jag fick ingen korrekt caching. Får se 
+        Detta trots jag har vary by query-Id. Men då hade jag inte "?Id=10", utan "/Id=10", så jag fick ingen korrekt caching. Får se
         om jag kommer ihåg att fixa.
         <cache expires-after="TimeSpan.FromHours(24)" vary-by-query="Id">  *@
     <div id="accordion" class="row justify-content-center">
@@ -47,15 +52,19 @@ else
     </div>
 }
 
-<div class="row justify-content-center mt-4">
-    <form action="/action_page.php">
-        <label for="cars">Who are you?</label>
-        <select name="cars" class="d-inline-block">
-            @foreach (var a in Model.Attendees)
-            {
-                <option value="@{a.Id.ToString();} ">@a.Name</option>
-            }
-        </select>
-        <input type="submit" value="Join Event" class="btn btn-lg btn-primary">
-    </form>
-</div>
+
+@if (Model.Attendees != null && Model.Attendees.Count > 0)
+{
+    <div class="row justify-content-center mt-4">
+        <form action="/action_page.php">
+            <label for="cars">Who are you?</label>
+            <select name="cars" class="d-inline-block">
+                @foreach (var a in Model.Attendees)
+                {
+                    <option value="@{a.Id.ToString();} ">@a.Name</option>
+                }
+            </select>
+            <input type="submit" value="Join Event" class="btn btn-lg btn-primary">
+        </form>
+    </div>
+}
