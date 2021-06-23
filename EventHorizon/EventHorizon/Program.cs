@@ -30,7 +30,7 @@ namespace EventHorizon
                 try
                 {
                     var context = services.GetRequiredService<EventHorizonContext>();
-                    var userManager = services.GetRequiredService<UserManager<User>>();
+                    var userManager = services.GetRequiredService<UserManager<Attendee>>();
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     var config = services.GetRequiredService<IConfiguration>();
 

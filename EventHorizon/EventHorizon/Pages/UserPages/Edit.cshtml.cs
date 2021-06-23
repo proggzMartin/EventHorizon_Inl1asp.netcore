@@ -12,11 +12,11 @@ namespace EventHorizon.Pages.UserPages
     public class EditModel : PageModel
     {
         [BindProperty]
-        public User ViewUser { get; set; }
+        public Attendee ViewUser { get; set; }
 
-        private UserManager<User> _userManager;
+        private UserManager<Attendee> _userManager;
 
-        public EditModel(UserManager<User> userManager)
+        public EditModel(UserManager<Attendee> userManager)
         {
             _userManager = userManager;
         }

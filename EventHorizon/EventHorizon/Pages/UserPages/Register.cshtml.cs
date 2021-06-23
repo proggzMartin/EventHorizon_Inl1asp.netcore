@@ -10,14 +10,14 @@ namespace EventHorizon.Pages.UserPages
     public class RegisterModel : PageModel
     {
         private readonly EventHorizonContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Attendee> _userManager;
 
 
         [BindProperty]
         public RegisterViewModel RegisterViewModel { get; set; }
 
         public RegisterModel(EventHorizonContext context, 
-                             UserManager<User> userManager)
+                             UserManager<Attendee> userManager)
         {
             _context = context;
             _userManager = userManager;

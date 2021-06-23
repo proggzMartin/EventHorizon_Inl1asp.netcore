@@ -12,7 +12,7 @@ namespace EventHorizon.Data
     public static class DbInitializer
     {
         public static async Task InitializeDbAsync(EventHorizonContext context, 
-                                                   UserManager<User> userManager, 
+                                                   UserManager<Attendee> userManager, 
                                                    RoleManager<IdentityRole> roleManager,
                                                    IConfiguration config)
         {
@@ -45,11 +45,11 @@ namespace EventHorizon.Data
 
             if (await userManager.FindByEmailAsync(adminEmail) == null)
             {
-                User admin1 = new User()
+                Attendee admin1 = new Attendee()
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    FirstName = "Admin",
+                    Name = "Admin",
                     LastName = "Adminsson",
                 };
                 var admin = await userManager.CreateAsync(admin1, "Abc123!");
@@ -60,11 +60,11 @@ namespace EventHorizon.Data
 
             if (await userManager.FindByEmailAsync(orgEmail) == null)
             {
-                User org1 = new User()
+                Attendee org1 = new Attendee()
                 {
                     UserName = orgEmail,
                     Email = orgEmail,
-                    FirstName = "Organizer",
+                    Name = "Organizer",
                     LastName = "Organizersson"
                 };
                 var org = await userManager.CreateAsync(org1, "Abc123!");
@@ -88,11 +88,11 @@ namespace EventHorizon.Data
                     foreach (var lastName in lastNames)
                     {
                         var email = firstName + "." + lastName + "@email.com";
-                        await userManager.CreateAsync(new User()
+                        await userManager.CreateAsync(new Attendee()
                         {
                             UserName = email,
                             Email = email,
-                            FirstName = firstName,
+                            Name = firstName,
                             LastName = lastName,
                         }, "Abc123!");
                     }

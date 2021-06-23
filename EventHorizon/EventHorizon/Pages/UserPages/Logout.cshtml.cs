@@ -9,9 +9,9 @@ namespace EventHorizon.Pages.UserPages
 {
     public class LogoutModel : PageModel
     {
-        SignInManager<User> _signInManager;
+        SignInManager<Attendee> _signInManager;
 
-        public LogoutModel(SignInManager<User> signInManager)
+        public LogoutModel(SignInManager<Attendee> signInManager)
         {
             _signInManager = signInManager;
         }

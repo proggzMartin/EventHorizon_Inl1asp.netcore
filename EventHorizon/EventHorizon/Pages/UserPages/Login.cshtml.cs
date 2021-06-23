@@ -12,8 +12,8 @@ namespace EventHorizon.Pages.UserPages
         [BindProperty]
         public LoginViewModel LoginViewModel { get; set; }
 
-        SignInManager<User> _signInManager;
-        public LoginModel(SignInManager<User> signInManager)
+        SignInManager<Attendee> _signInManager;
+        public LoginModel(SignInManager<Attendee> signInManager)
         {
             _signInManager = signInManager;
         }

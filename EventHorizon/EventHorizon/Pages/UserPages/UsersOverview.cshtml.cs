@@ -12,7 +12,7 @@ namespace EventHorizon.Pages.UserPages
     public class UsersOverviewModel : PageModel
     {
         private readonly EventHorizonContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Attendee> _userManager;
 
         //The users should be shown at Get.
         [BindProperty(SupportsGet = true)]
@@ -20,7 +20,7 @@ namespace EventHorizon.Pages.UserPages
 
         //Using EventHorizonContext because wanan get all users.
         public UsersOverviewModel(EventHorizonContext context,
-                                  UserManager<User> userManager)
+                                  UserManager<Attendee> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -43,7 +43,7 @@ namespace EventHorizon.Pages.UserPages
 
                 tempUsersList.Add(new UsersOverviewViewModel()
                 {
-                    FirstName = u.FirstName,
+                    FirstName = u.Name,
                     LastName = u.LastName,
                     Email = u.Email,
                     Roles = rolesString

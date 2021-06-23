@@ -14,7 +14,7 @@ namespace EventHorizon.Pages.EventPages
         public Event Event { get; set; }
 
         private readonly EventHorizonContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Attendee> _userManager;
 
         public bool AlreadyJoined { get; set; }
         public bool HaveJoined { get; set; }
@@ -22,7 +22,7 @@ namespace EventHorizon.Pages.EventPages
 
 
         public JoinEvent(EventHorizonContext context,
-                         UserManager<User> userManager)
+                         UserManager<Attendee> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -78,7 +78,7 @@ namespace EventHorizon.Pages.EventPages
             return Page();
         }
 
-        private async Task<User> ContextUserJoinedEvents(string id)
+        private async Task<Attendee> ContextUserJoinedEvents(string id)
         {
             return await _context.User
                     .Include(x => x.JoinedEvents)

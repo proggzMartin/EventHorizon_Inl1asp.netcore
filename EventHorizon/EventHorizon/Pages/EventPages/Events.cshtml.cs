@@ -11,10 +11,10 @@ namespace EventHorizon.Pages.EventPages
     public class EventsModel : PageModel
     {
         private readonly EventHorizonContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Attendee> _userManager;
 
         public EventsModel(EventHorizonContext context,
-                           UserManager<User> userManager)
+                           UserManager<Attendee> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -25,7 +25,7 @@ namespace EventHorizon.Pages.EventPages
 
         public async Task OnGetAsync()
         {
-            User currentUser = null;
+            Attendee currentUser = null;
 
             if (User != null)
                 currentUser = await _userManager.GetUserAsync(User);

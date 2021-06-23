@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EventHorizon.Pages.UserPages
 {
-    public class RegisterViewModel : User
+    public class RegisterViewModel : Attendee
     {
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }

@@ -18,6 +18,6 @@ namespace EventHorizon.Data.Entities
 
         public byte[] EventImage { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public ICollection<Attendee> Attendees { get; set; }
     }
 }

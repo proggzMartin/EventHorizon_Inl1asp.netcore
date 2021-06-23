@@ -25,7 +25,7 @@ namespace EventHorizon
             services.AddDbContext<EventHorizonContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("EventHorizonContext")));
 
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<Attendee, IdentityRole>()
                     .AddEntityFrameworkStores<EventHorizonContext>(); //this dbContext will retrieve user and roleinfo.
 
             string adminPolicy = "AdminPolicy";
