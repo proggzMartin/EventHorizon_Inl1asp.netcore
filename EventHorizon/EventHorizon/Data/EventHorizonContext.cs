@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using EventHorizon.Data.Entities;
+using EventHorizon.Data.Models;
 
 namespace EventHorizon.Data
 {

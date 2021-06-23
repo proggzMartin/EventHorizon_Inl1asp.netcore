@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EventHorizon.Data.Entities
+namespace EventHorizon.Data.Models
 {
     public class Feedback
     {

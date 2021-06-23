@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using EventHorizon.Data;
-using EventHorizon.Data.Entities;
+using EventHorizon.Data.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace EventHorizon.Pages.UserPages

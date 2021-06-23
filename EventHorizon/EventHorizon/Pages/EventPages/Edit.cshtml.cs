@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EventHorizon.Data;
-using EventHorizon.Data.Entities;
+using EventHorizon.Data.Models;
 
 namespace EventHorizon.Pages.EventPages
 {

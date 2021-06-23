@@ -1,4 +1,4 @@
-﻿using EventHorizon.Data.Entities;
+﻿using EventHorizon.Data.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace EventHorizon.Pages.UserPages

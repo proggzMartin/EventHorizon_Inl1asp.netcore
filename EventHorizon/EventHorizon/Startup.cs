@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using EventHorizon.Data;
 using Microsoft.AspNetCore.Identity;
-using EventHorizon.Data.Entities;
+using EventHorizon.Data.Models;
 
 namespace EventHorizon
 {

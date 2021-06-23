@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using EventHorizon.Data.Entities;
+using EventHorizon.Data.Models;
 
 namespace EventHorizon.Pages.EventPages
 {
