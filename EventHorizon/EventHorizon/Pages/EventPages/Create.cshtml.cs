@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using EventHorizon.Data;
 using EventHorizon.Data.Entities;
 
 namespace EventHorizon.Pages.EventPages
 {
     public class CreateModel : PageModel
     {
-        private readonly EventHorizon.Data.DataContext _context;
+        private readonly EventHorizon.Data.EventHorizonContext _context;
 
-        public CreateModel(EventHorizon.Data.DataContext context)
+        public CreateModel(EventHorizon.Data.EventHorizonContext context)
         {
             _context = context;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["OrganizerId"] = new SelectList(_context.Organizer, "Id", "Id");
             return Page();
         }
 

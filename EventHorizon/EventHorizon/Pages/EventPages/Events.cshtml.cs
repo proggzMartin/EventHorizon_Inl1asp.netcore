@@ -1,31 +1,50 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventHorizon.Data;
 using EventHorizon.Data.Entities;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventHorizon.Pages.EventPages
 {
     public class EventsModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly EventHorizonContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public EventsModel(EventHorizon.Data.DataContext context)
+        public EventsModel(EventHorizonContext context,
+                           UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        public IList<Event> Events { get; set; }
+
+        public List<EventViewModel> Events { get; set; } = new List<EventViewModel>();
 
         public async Task OnGetAsync()
         {
-            Events = await _context.Event
-                .Include(x => x.Organizer)
-                .ToListAsync();
+            User currentUser = null;
+
+            if (User != null)
+                currentUser = await _userManager.GetUserAsync(User);
+
+            var tempEvents = _context.Event.ToList();
+
+            foreach (var e in tempEvents)
+            {
+                var alreadyJoined = currentUser?.JoinedEvents?.FirstOrDefault(x => x.Id.Equals(e.Id)) != null;
+
+                Events.Add(new EventViewModel()
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    EventImage = e.EventImage,
+                    UserAlreadyJoined = alreadyJoined
+                });
+            }
         }
     }
 }

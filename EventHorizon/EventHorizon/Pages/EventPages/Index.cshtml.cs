@@ -8,9 +8,9 @@ namespace EventHorizon.Pages.EventPages
 {
     public class IndexModel : PageModel
     {
-        private readonly EventHorizon.Data.DataContext _context;
+        private readonly EventHorizon.Data.EventHorizonContext _context;
 
-        public IndexModel(EventHorizon.Data.DataContext context)
+        public IndexModel(EventHorizon.Data.EventHorizonContext context)
         {
             _context = context;
         }
@@ -19,8 +19,7 @@ namespace EventHorizon.Pages.EventPages
 
         public async Task OnGetAsync()
         {
-            Event = await _context.Event
-                .Include(x => x.Organizer).ToListAsync();
+
         }
     }
 }

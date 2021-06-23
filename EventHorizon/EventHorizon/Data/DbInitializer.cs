@@ -1,70 +1,104 @@
 ﻿using EventHorizon.Data.Entities;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EventHorizon.Data
 {
     public static class DbInitializer
     {
-
-        public static void Initialize(DataContext context)
+        public static async Task InitializeDbAsync(EventHorizonContext context, 
+                                                   UserManager<User> userManager, 
+                                                   RoleManager<IdentityRole> roleManager,
+                                                   IConfiguration config)
         {
             context.Database.EnsureCreated();
 
-            Random r = new Random();
+            //=================
+            //initialize roles.
+            var expectedRoles = config
+                            .GetSection("Roles")
+                            .GetChildren()
+                            .Select(x => x.Value);
 
-            var firstNames = new string[] { "Lovisa", "SvenElof", "Lisa", "Sven" };
-            var lastNames = new string[] { "Svensson", "Rutgersson", "Floktomopedsson", "TrytarGräs" };
+            var rolesInDb = roleManager.Roles.ToList();
 
-            //Attendees has not been seeded.
-            if (!context.Attendee.Any())
+            //If a role not belonging in the db has found its way there, delete it.
+            foreach (var dbRole in rolesInDb)
+                if (!expectedRoles.Any(x => x.Equals(dbRole.Name)))
+                    await roleManager.DeleteAsync(dbRole);
+
+            //Make sure all expected roles are in the db.
+            rolesInDb = roleManager.Roles.ToList();
+            foreach (var expectedRoleName in expectedRoles)
+                if (!rolesInDb.Any(x => x.Name.Equals(expectedRoleName)))
+                    await roleManager.CreateAsync(new IdentityRole() { Name = expectedRoleName });
+
+            //=================
+            //Initialize an admin and organizer account.
+
+            var adminEmail = "admin@email.com";
+
+            if (await userManager.FindByEmailAsync(adminEmail) == null)
             {
-                foreach(var firstName in firstNames)
+                User admin1 = new User()
                 {
-                    foreach(var lastName in lastNames)
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    FirstName = "Admin",
+                    LastName = "Adminsson",
+                };
+                var admin = await userManager.CreateAsync(admin1, "Abc123!");
+                await userManager.AddToRoleAsync(admin1, "Admin");
+            }
+
+            var orgEmail = "org@email.com";
+
+            if (await userManager.FindByEmailAsync(orgEmail) == null)
+            {
+                User org1 = new User()
+                {
+                    UserName = orgEmail,
+                    Email = orgEmail,
+                    FirstName = "Organizer",
+                    LastName = "Organizersson"
+                };
+                var org = await userManager.CreateAsync(org1, "Abc123!");
+                await userManager.AddToRoleAsync(org1, "Organizer");
+
+            }
+
+            //=================
+            //Initialize regular users.
+            //if there are no regular users,
+            //that is, if there aren't any user whose email isn't admin or org.
+            if (!context.User.Any(x => !(x.Email.Equals(adminEmail) || x.Email.Equals(orgEmail)) ))
+            {
+                Random r = new Random();
+
+                var firstNames = new string[] { "Lovisa", "SvenElof", "Lisa", "Sven" };
+                var lastNames = new string[] { "Svensson", "Rutgersson", "Floktomopedsson", "TrytarGräs" };
+
+                foreach (var firstName in firstNames)
+                {
+                    foreach (var lastName in lastNames)
                     {
-                        context.Attendee.Add(new Attendee()
+                        var email = firstName + "." + lastName + "@email.com";
+                        await userManager.CreateAsync(new User()
                         {
-                            Name = firstName + " " + lastName,
-                            Email = firstName + "." + lastName + "@email.com",
-                            Phone = r.Next(11111, 99999).ToString()
-                        }); ; 
+                            UserName = email,
+                            Email = email,
+                            FirstName = firstName,
+                            LastName = lastName,
+                        }, "Abc123!");
                     }
                 }
                 context.SaveChanges();
             }
-
-            if(!context.Organizer.Any())
-            {
-                context.Organizer.AddRange(
-                    new Organizer()
-                    {
-                        Name = "Lukas Lustriga Lökhus",
-                        Email = "liustrigtlustig@email.com",
-                        Phone = "1111112222222"
-                    }, new Organizer()
-                    {
-                        Name = "Flinigt plejs",
-                        Email = "flin@email.com",
-                        Phone = "333333333333"
-                    }, new Organizer()
-                    {
-                        Name = "Gabriellas Gastkåk",
-                        Email = "gastkak@email.com",
-                        Phone = "444444444444"
-                    }, new Organizer()
-                    {
-                        Name = "Fidolinas fiolkammare",
-                        Email = "fidolinas@email.com",
-                        Phone = "555555555555"
-                    }
-                );
-                context.SaveChanges();
-            }
-
 
             if (!context.Event.Any())
             {
@@ -81,7 +115,6 @@ namespace EventHorizon.Data
                         files.Add(File.ReadAllBytes(filepath));
                     }
                 }
-                
 
                 context.Event.AddRange(new Event()
                     {
@@ -90,7 +123,6 @@ namespace EventHorizon.Data
                         SpotsAvailable = 50,
                         Description = "Vi firar Börje och det blir ett jädrans hålligång med öl och saft.",
                         Date = new DateTime(2021, 06, 06),
-                        Organizer = context.Organizer.FirstOrDefault(x => x.Name.Equals("Lukas Lustriga Lökhus")),
                         Place = "Hökö",
                         EventImage = (files != null && files.Count > 0 ? files[0] : null)
                     }, new Event()
@@ -101,7 +133,6 @@ namespace EventHorizon.Data
                         Description = "En resa i oerhört primitiva och ofaschinerande nyheter om reptilprimitiva militära och socialpolitiska konflikter som inträffat det senaste året." +
                         " Så lite som möjligt om vetenskapliga fakta och beprövade teorier vilka skulle kunna driva mänskligheten framåt på riktigt, bort!.",
                         Date = new DateTime(2022, 01, 13),
-                        Organizer = context.Organizer.FirstOrDefault(x => x.Name.Equals("Flinigt plejs")),
                         Place = "AmsterGrannt",
                         EventImage = (files != null && files.Count > 1 ? files[1] : null)
                     }
@@ -110,22 +141,22 @@ namespace EventHorizon.Data
 
             }
 
-            if (!context.UserFeedback.Any())
+            if (!context.Feedback.Any())
             {
-                context.UserFeedback.AddRange(new UserFeedback()
+                context.Feedback.AddRange(new Feedback()
                 {
-                    Feedback = "Kanonsajt, hitta allt jag klan ölönska mig!"
-                }, new UserFeedback()
+                    Text = "Kanonsajt, hitta allt jag klan ölönska mig!"
+                }, new Feedback()
                 {
-                    Feedback = "Tycker era fonter är lite tråkiga."
+                    Text = "Tycker era fonter är lite tråkiga."
                 },
-                new UserFeedback()
+                new Feedback()
                 {
-                    Feedback = "Bootstrap är king."
+                    Text = "Bootstrap är king."
                 },
-                new UserFeedback()
+                new Feedback()
                 {
-                    Feedback = "Jag gillar att det framgick att det ingick kaka till kaffet i Lovisas 70-årskalas."
+                    Text = "Jag gillar att det framgick att det ingick kaka till kaffet i Lovisas 70-årskalas."
                 }
                 ); ;
                 context.SaveChanges();

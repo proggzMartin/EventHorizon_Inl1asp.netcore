@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EventHorizon.Migrations
 {
-    [DbContext(typeof(DataContext))]
+    [DbContext(typeof(EventHorizonContext))]
     [Migration("20210321181701_AttendeeManyToManyEvent")]
     partial class AttendeeManyToManyEvent
     {

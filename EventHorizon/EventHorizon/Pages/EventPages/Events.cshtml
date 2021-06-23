@@ -1,7 +1,10 @@
 ﻿@page "/Events"
 @model EventHorizon.Pages.EventPages.EventsModel
-
+@using Microsoft.AspNetCore.Identity;
+@using EventHorizon.Data.Entities
+@inject SignInManager<User> signInManager;
 <div>
+
     @if (Model.Events == null || Model.Events.Count < 1)
     {
         <div class="row justify-content-center">
@@ -10,22 +13,11 @@
     }
     else
     {
-        @*cache tag-helper handlar om att framförallt widgets (tror jag) som inte behöver uppdateras ständigt inte
-            behöver göra nya database-queries i onödan, utan man kan med denna tag se till att de utförs inte alltför
-            ofta. Sannolikt behövs mer, behöver läsa på lite till om denna feature.
 
-            vary-by-time innebär att vi har en query-param i URL, varje gång den ändras så expirar cachen.
-            Ex. om öppnar sidan o skriver ?param1=6 så ändras datumet i toppen, ändrar man efter en stund
-            till ?param1=7 ser man att klockan uppdateras igen.
-        *@
-<cache expires-after="TimeSpan.FromHours(24)" vary-by-query="param1">
-    @DateTime.Now @*<-- Detta användes för att testa <cache>. skriv in "?param1=hej" i path för att sätta ny tid,
-                    den beror av vary-by-query="param1"
-                  *@
     <div id="accordion" class="row justify-content-center">
         @for (int i = 0; i < Model.Events.Count; i++)
         {
-            <div class="card" style="width: 40rem;">
+            <div class="card col-md-8">
                 <div class="card-header" id="heading@(i)">
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapse@(i)" aria-expanded="true" aria-controls="collapse@(i)">
                         @Model.Events[i].Title
@@ -41,7 +33,12 @@
                         --> Detta är route-param för JoinEvent.cshtml nu.
                         Det är inte det smartaste, eftersom Title sällan är unik, men mja jag ville testa något annat.
                     *@
-                    <a class="btn btn-primary text-white float-right" asp-page="JoinEvent" asp-route-id="@Model.Events[i].Id">Join event</a>
+                    @if (signInManager.IsSignedIn(User))
+                    {
+
+                        <a class="btn btn-primary text-white float-right" asp-page="JoinEvent" asp-route-id="@Model.Events[i].Id">Join event</a>
+                    }
+
                 </div>
                 <div id="collapse@(i)" class="collapse @(i==0?"show":"")" aria-labelledby="heading@(i)" data-parent="#accordion">
                     <div class="card-body">
@@ -63,6 +60,18 @@
             </div>
         }
     </div>
-</cache>
+
+
+        @if (!signInManager.IsSignedIn(User))
+        {
+            <div class="row justify-content-center">
+                <div class="card col-md-6 mt-3 text-center">
+                    <div class="card-body">
+                        <h5>Login or register to join these events!</h5>
+                    </div>
+                </div>
+            </div>
+        }
     }
 </div>
+        

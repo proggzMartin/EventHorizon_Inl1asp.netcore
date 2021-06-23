@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
+@using EventHorizon.Data.Entities
+@inject SignInManager<User> signinManager;
+@{ 
+    var isSignedIn = signinManager.IsSignedIn(User);
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -32,18 +38,45 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-dark" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/EventPages/Events">Events</a>
+                            <a class="nav-link text-dark" asp-page="/EventPages/Events">Events</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/AttendeePages/MyEvents">My Events</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/AttendeePages/Register">Register</a>
-                        </li>
+                        @if (isSignedIn)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="">My Evetns NOT IMPL</a>
+                            </li>
+                        }
                     </ul>
+                    @* Becayse if justify-content-between, these options will be pushed to other side of navbar. *@
+                <ul class="navbar-nav">
+
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li>
+                            <a class="nav-link text-dark" asp-page="/UserPages/UsersOverview">Manage Users</a>
+                        </li>
+                    }
+                    @if (isSignedIn) //User är något inbyggt i kulisserna man nyttjar (?)
+                    {
+                        <li>
+                            <a class="nav-link text-dark" asp-page="/UserPages/Logout">Logout</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a class="nav-link text-dark" asp-page="/UserPages/Login">Login</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-page="/UserPages/Register">Register</a>
+                        </li>
+                    }
+                </ul>
                 </div>
             </div>
         </nav>

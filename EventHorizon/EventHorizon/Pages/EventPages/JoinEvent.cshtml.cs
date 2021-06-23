@@ -5,30 +5,27 @@ using Microsoft.EntityFrameworkCore;
 using EventHorizon.Data;
 using EventHorizon.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
 
 namespace EventHorizon.Pages.EventPages
 {
     public class JoinEvent : PageModel
     {
+        public Event Event { get; set; }
 
-        public SelectList AttendeeSelect { get; set; }
+        private readonly EventHorizonContext _context;
+        private readonly UserManager<User> _userManager;
 
-
-        public Event Event { get; set; } = new Event();
-
-        [BindProperty]
-        public Attendee ChosenAttendee { get; set; } = new Attendee();
-
+        public bool AlreadyJoined { get; set; }
+        public bool HaveJoined { get; set; }
         public string Message { get; set; }
 
-        public bool Joined { get; set; }
 
-
-        private readonly DataContext _context;
-
-        public JoinEvent(DataContext context)
+        public JoinEvent(EventHorizonContext context,
+                         UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> OnGetAsync(int? id)
@@ -38,28 +35,54 @@ namespace EventHorizon.Pages.EventPages
                 return NotFound();
             }
 
-            //Det är ett medvetet dumt val att query:a på eventTitle eftersom den inte är
-            //nödvändigtvis unik, men ville testa något nytt
-            //(får annan route till sidan)
-            Event = await _context.Event
-                .Include(x => x.Organizer).FirstOrDefaultAsync(m => m.Id.Equals(id));
-
-            var q = await _context.Attendee.AsNoTracking().ToListAsync();
-
-            AttendeeSelect = new SelectList(q, "Id", "Name");
+            Event = await _context.Event.FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             if (Event == null)
             {
                 return NotFound();
             }
 
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                var contextUser = await ContextUserJoinedEvents(user.Id);
+
+                if (contextUser.JoinedEvents.Contains(Event))
+                {
+                    AlreadyJoined = true;
+                }
+            }
+
             return Page();
         }
 
-        public void OnPost()
+        public async Task<IActionResult> OnPost(int eventId)
         {
-            Joined = true;
+            var user = await _userManager.GetUserAsync(User);
+
+            if(user!= null)
+            {
+                var contextUser = await ContextUserJoinedEvents(user.Id);
+
+                if (user != null)
+                {
+                    contextUser.JoinedEvents.Add(Event);
+                    _context.SaveChanges();
+                }
+
+                Message = "Successfully joined event!";
+            }
+            
+
+            return Page();
         }
 
+        private async Task<User> ContextUserJoinedEvents(string id)
+        {
+            return await _context.User
+                    .Include(x => x.JoinedEvents)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(id));
+        }
     }
 }

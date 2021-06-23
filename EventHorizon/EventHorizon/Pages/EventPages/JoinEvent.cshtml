@@ -17,13 +17,16 @@ else
     @if (!string.IsNullOrEmpty(Model.Message))
     {
         <div class="alert alert-success">@Model.Message</div>
-
     }
     @* Kuriosa; cache här ställer till det; laddar jag ett event, går tillbaka och försöker ladda ett annat, så ligger det gamla kvar!
         Detta trots jag har vary by query-Id. Men då hade jag inte "?Id=10", utan "/Id=10", så jag fick ingen korrekt caching. Får se
         om jag kommer ihåg att fixa.
         <cache expires-after="TimeSpan.FromHours(24)" vary-by-query="Id">  *@
     <div id="accordion" class="row justify-content-center">
+    @if (Model.Event != null && 
+         !string.IsNullOrEmpty(Model.Event.Title) && 
+         !string.IsNullOrEmpty(Model.Event.Description))
+    {
         <div class="card" style="width: 40rem;">
             <div class="card-header" id="heading1">
                 @Html.DisplayFor(model => model.Event.Title)
@@ -33,43 +36,51 @@ else
             </div>
             <div id="collapse1" class="collapse show" aria-labelledby="heading1" data-parent="#accordion">
                 <div class="card-body">
-                    @{
+                    @if (Model.Event.EventImage != null)
+                    {
                         var base64 = Convert.ToBase64String(Model.Event.EventImage);
                         var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                        if (!string.IsNullOrEmpty(imgSrc))
+                        {
+                            @*asp-append-version; suffix:ar ett random-parameter-tal  till souce-url:en för bilden;
+                Problemet det löser är att webbrowsers gärna caches per URL, så uppdaterar man bilden
+                på servern, kommer inte en ny laddas av browsern för den har samma source, således "finns redan".
+                Genom att random-talet append:as, kommer broswern se detta som en ny image och ladda ner den.*@
+                            <img asp-append-version="true" src="@imgSrc" class="card-img rounded mb-2" alt="Card image cap">
+                        }
+
                     }
-                    @if (!string.IsNullOrEmpty(imgSrc))
-                    {
-                        @*asp-append-version; suffix:ar ett random-parameter-tal  till souce-url:en för bilden;
-                            Problemet det löser är att webbrowsers gärna caches per URL, så uppdaterar man bilden
-                            på servern, kommer inte en ny laddas av browsern för den har samma source, således "finns redan".
-                            Genom att random-talet append:as, kommer broswern se detta som en ny image och ladda ner den.*@
-                        <img asp-append-version="true" src="@imgSrc" class="card-img rounded mb-2" alt="Card image cap">
-                    }
+
                     @Model.Event.Description
+
+                    @if (Model.AlreadyJoined)
+                    {
+                        <div class="btn btn-secondary"><i>You have joined this event</i></div>
+                    }
+                    else
+                    {
+                        <form method="post" class="mt-3">
+                            <input hidden value="@Model.Event.Id" />
+                            <input type="submit" class="btn btn-success" value="Join this event" />
+                        </form>
+                    }
                 </div>
             </div>
         </div>
-    </div>
+    }
+
+</div>
 }
 
 
-@if (!Model.Joined && Model.AttendeeSelect != null && Model.AttendeeSelect.Count() > 0)
-{
-    <div class="row justify-content-center mt-4">
-        <form asp-page="JoinEvent" method="post">
-            <label for="cars">Who are you?</label>
-            <select asp-for="ChosenAttendee.Id" asp-items="@Model.AttendeeSelect" class="d-inline-block"></select>
-            <input type="submit" value="Join Event" class="btn btn-lg btn-primary">
-        </form>
-    </div>
-}
-else if (Model.Joined)
+
+@if(Model.HaveJoined)
 {
     <div class="row justify-content-center mt-4">
         <h1>Successfully joined "@Model.Event.Title"! See you there!</h1>
     </div>
     <div class="row justify-content-center">
         <a class="btn btn-primary text-white" asp-page="Events">View more events</a>
-        <a class="btn btn-primary text-white" asp-page="/AttendeePages/MyEvents">View your events</a>
+        <a class="btn btn-primary text-white ml-2" asp-page="/AttendeePages/MyEvents">View your events</a>
     </div>
 }

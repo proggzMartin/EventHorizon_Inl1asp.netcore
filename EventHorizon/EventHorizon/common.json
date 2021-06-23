@@ -1,0 +1,6 @@
+
+//Settings common for all environments
+
+{
+  "Roles": ["Admin", "Organizer"]
+}

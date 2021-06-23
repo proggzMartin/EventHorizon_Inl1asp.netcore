@@ -1,0 +1,51 @@
+﻿@page
+@model EventHorizon.Pages.ConfirmationModel
+
+
+<div class="container">
+    @if (Model.confType == null)
+    {
+        <div class="row justify-content-center">
+            <div class="card">
+                <h3 class="card-header text-center">Hmmm ? .. </h3>
+                <div class="card-body">
+                    <p class="card-text">This is the confirmation page, but there's nothing to confirm.</p>
+                </div>
+            </div>
+        </div>
+
+    }
+    else if (Model.confType.Equals(ConfirmationType.Feedback))
+    {
+        <div class="row justify-content-center col-md-6">
+            <h1>Thank you for your feedback!</h1>
+        </div>
+    }
+    else if (Model.confType.Equals(ConfirmationType.Registration))
+    {
+        <div class="row justify-content-center">
+            <div class="card">
+                <h3 class="card-header">User Registered</h3>
+                <div class="card-body">
+
+                    @*Html.Raw är för att kunna läsa html-markup i string.*@
+                    <p class="card-text">@Html.Raw(Model.DisplayMessage)</p>
+                    <a class="btn btn-primary card-link text-white" asp-page="/UserPages/Login">To login</a>
+                    <a class="btn btn-secondary card-link text-white" asp-page="/Index">To firstpage</a>
+                </div>
+            </div>
+        </div>
+    } else if (Model.confType.Equals(ConfirmationType.UserUpdated))
+    {
+        <div class="row justify-content-center">
+            <div class="card">
+                <h3 class="card-header">User Updated</h3>
+                <div class="card-body">
+                    @*Html.Raw är för att kunna läsa html-markup i string.*@
+                    <p class="card-text">@Html.Raw(Model.DisplayMessage)</p>
+                    <a class="btn btn-secondary card-link text-white" asp-page="/Index">To firstpage</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

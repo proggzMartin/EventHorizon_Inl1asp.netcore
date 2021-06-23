@@ -12,9 +12,9 @@ namespace EventHorizon.Pages.EventPages
 {
     public class DeleteModel : PageModel
     {
-        private readonly EventHorizon.Data.DataContext _context;
+        private readonly EventHorizon.Data.EventHorizonContext _context;
 
-        public DeleteModel(EventHorizon.Data.DataContext context)
+        public DeleteModel(EventHorizon.Data.EventHorizonContext context)
         {
             _context = context;
         }
@@ -28,9 +28,6 @@ namespace EventHorizon.Pages.EventPages
             {
                 return NotFound();
             }
-
-            Event = await _context.Event
-                .Include(x => x.Organizer).FirstOrDefaultAsync(m => m.Id == id);
 
             if (Event == null)
             {

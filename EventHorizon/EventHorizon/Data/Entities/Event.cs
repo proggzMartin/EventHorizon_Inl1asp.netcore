@@ -18,9 +18,6 @@ namespace EventHorizon.Data.Entities
 
         public byte[] EventImage { get; set; }
 
-        public ICollection<Attendee> Attendees { get; set; }
-
-        public int OrganizerId { get; set; }
-        public Organizer Organizer { get; set; }
+        public ICollection<User> Users { get; set; }
     }
 }

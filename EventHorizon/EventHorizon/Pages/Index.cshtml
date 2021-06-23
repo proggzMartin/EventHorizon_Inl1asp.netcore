@@ -1,9 +1,30 @@
 ﻿@page
 @model IndexModel
+@using Microsoft.AspNetCore.Identity;
+@using EventHorizon.Data.Entities;
+@inject SignInManager<User> signInManager;
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "EventHorizon";
 }
 
+
+@if (TempData["justLoggedIn"] != null && (bool)TempData["justLoggedIn"] && signInManager.IsSignedIn(User))
+{
+    <div class="row justify-content-center ">
+        <div class="col-md-4 alert alert-success">
+            User logged in.
+        </div>
+    </div>
+
+}
+else if (TempData["justLoggedOut"] != null && (bool)TempData["justLoggedOut"] && !signInManager.IsSignedIn(User))
+{
+    <div class="row justify-content-center">
+        <div class="col-md-4 alert alert-secondary">
+            User logged out.
+        </div>
+    </div>
+}
 
 <div class="row justify-content-center">
     <div class="card border-dark" style="width: 40rem;">
@@ -28,26 +49,30 @@
                     consectetur tellus lacus, vel bibendum nisl sollicitudin non. Mauris sed porttitor dui.
                 </p>
             </div>
-            <div class="card-body text-center">
-                <div class="row">
-                    <div class="col">
-                        <a class="btn-primary btn-lg btn-block" asp-page="Index">
-                            Register
-                        </a>
-                    </div>
-                    <div class="col">
-                        <a class="btn-secondary btn-lg btn-block" asp-page="Index">
-                            Login
-                        </a>
+
+            @if (!signInManager.IsSignedIn(User))
+            {
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn-primary btn-lg btn-block" asp-page="/UserPages/Register">
+                                Register
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a class="btn-secondary btn-lg btn-block" asp-page="/UserPages/Login">
+                                Login
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     </div>
 </div>
 
 
-    
+
 
 
 

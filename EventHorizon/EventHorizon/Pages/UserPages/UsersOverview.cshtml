@@ -1,0 +1,50 @@
+﻿@page "UsersOverview"
+@model EventHorizon.Pages.UserPages.UsersOverviewModel
+@{
+}
+
+
+<h1>User Overview</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">
+                First name
+            </th>
+            <th scope="col">
+                Last name
+            </th>
+            <th scope="col">
+                Email
+            </th>
+            <th scope="col">
+                Role(s)
+            </th>
+            <th scope="col">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var u in Model.Users)
+    {
+        <tr>
+            <td>
+                @u.FirstName
+            </td>
+            <td>
+                @u.LastName
+            </td>
+            <td>
+                @u.Email
+            </td>
+            <td>
+                @u.Roles
+            </td>
+            <td>
+                <a asp-page="/UserPages/Edit" asp-route-Email="@u.Email">Edit</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+

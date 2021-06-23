@@ -1,39 +1,40 @@
 using EventHorizon.Data;
+using EventHorizon.Data.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace EventHorizon
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
-            CreateDbIfNotInitialized(host);
+            await CreateDbIfNotInitialized(host);
 
             host.Run();
         }
 
-
-        private static void CreateDbIfNotInitialized(IHost host)
+        private static async Task CreateDbIfNotInitialized(IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<DataContext>();
-                    
-                    DbInitializer.Initialize(context);
+                    var context = services.GetRequiredService<EventHorizonContext>();
+                    var userManager = services.GetRequiredService<UserManager<User>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var config = services.GetRequiredService<IConfiguration>();
+
+                    await DbInitializer.InitializeDbAsync(context, userManager, roleManager, config);
                 }
                 catch (Exception ex)
                 {
@@ -47,6 +48,8 @@ namespace EventHorizon
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).ConfigureAppConfiguration( //adds roles.json, used for initializing database with roles.
+                    o => o.AddJsonFile("common.json", optional: false, reloadOnChange: true)
+                );
     }
 }
